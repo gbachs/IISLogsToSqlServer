@@ -1,4 +1,4 @@
-﻿namespace IISLogsToSqlServer.Models
+﻿namespace IISLogsToSqlServer.Common.Models
 {
     public interface IConnectionInfo
     {

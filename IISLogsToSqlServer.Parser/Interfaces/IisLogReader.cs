@@ -6,6 +6,6 @@ namespace IISLogsToSqlServer.Parser.Interfaces
 {
     public interface IIisLogReader
     {
-        IEnumerable<W3CEvent> Read(TextReader reader);
+        IEnumerable<LogEvent> Read(TextReader reader);
     }
 }

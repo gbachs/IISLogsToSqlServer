@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.Extensions.Configuration;
 
-namespace IISLogsToSqlServer.Models
+namespace IISLogsToSqlServer.Common.Models
 {
     public class ConnectionInfo : IConnectionInfo
     {

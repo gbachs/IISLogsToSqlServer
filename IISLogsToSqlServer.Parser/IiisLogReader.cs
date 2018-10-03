@@ -8,17 +8,17 @@ namespace IISLogsToSqlServer.Parser
 {
     public class IisLogReader : IIisLogReader
     {
-        public IEnumerable<W3CEvent> Read(TextReader reader)
+        public IEnumerable<LogEvent> Read(TextReader reader)
         {
-            var itemParser = new W3CItemsParser();
-            var fieldMap = (W3CFieldMap)null;
+            var itemParser = new EventsParser();
+            var fieldMap = (FieldMapping)null;
             string line;
 
             while ((line = reader.ReadLine()) != null)
             {
                 if (line.StartsWith("#", StringComparison.OrdinalIgnoreCase))
                 {
-                    ParseHeader(line, fieldsLine => { fieldMap = new W3CFieldsParser().Parse(fieldsLine); });
+                    ParseHeader(line, fieldsLine => { fieldMap = new FieldsParser().Parse(fieldsLine); });
                     continue;
                 }
 

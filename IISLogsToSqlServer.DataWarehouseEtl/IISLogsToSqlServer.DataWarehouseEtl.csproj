@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IISLogsToSqlServer.Common\IISLogsToSqlServer.Common.csproj" />
+    <ProjectReference Include="..\IISLogsToSqlServer.Parser\IISLogsToSqlServer.Parser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Dapper.Contrib">
+      <HintPath>..\..\..\..\.nuget\packages\dapper.contrib\1.50.5\lib\netstandard2.0\Dapper.Contrib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

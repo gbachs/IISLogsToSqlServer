@@ -3,17 +3,17 @@ using IISLogsToSqlServer.Parser.Convertors;
 
 namespace IISLogsToSqlServer.Parser.Models
 {
-    public abstract class W3CFieldBaseAttribute : Attribute
+    public abstract class FieldBaseAttribute : Attribute
     {
         public readonly ITextConvertor Convertor;
         public readonly string FieldName;
 
-        protected W3CFieldBaseAttribute(string name)
+        protected FieldBaseAttribute(string name)
         {
             FieldName = name;
         }
 
-        protected W3CFieldBaseAttribute(string name, ITextConvertor convertor)
+        protected FieldBaseAttribute(string name, ITextConvertor convertor)
         {
             FieldName = name;
             Convertor = convertor;

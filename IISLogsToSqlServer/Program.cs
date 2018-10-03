@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using IISLogsToSqlServer.Models;
+using IISLogsToSqlServer.Common.Models;
+using IISLogsToSqlServer.Common.Repositories;
+using IISLogsToSqlServer.Common.Repositories.Interfaces;
+using IISLogsToSqlServer.DataWarehouseEtl.Dimensions;
+using IISLogsToSqlServer.DataWarehouseEtl.Facts;
+using IISLogsToSqlServer.DataWarehouseEtl.Services;
 using IISLogsToSqlServer.Parser;
 using IISLogsToSqlServer.Parser.Interfaces;
 using IISLogsToSqlServer.Parser.Models;
-using IISLogsToSqlServer.Repositories;
 using IISLogsToSqlServer.Services;
 using IISLogsToSqlServer.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,10 +22,22 @@ namespace IISLogsToSqlServer
         {
             var container = CreateContainer();
 
+            // UpdateRawLogs(container);
+            UpdateWarehouse(container);
+        }
+
+        private static void UpdateWarehouse(ServiceProvider container)
+        {
+            var updateWarehouseService = container.GetService<IUpdateDataWarehouseService>();
+            updateWarehouseService.Update();
+        }
+
+        private static void UpdateRawLogs(ServiceProvider container)
+        {
             var serverRepository = container.GetService<IRepository<Server>>();
             var parseLogsForServerService = container.GetService<IParseLogsForServerService>();
 
-            var servers = serverRepository.GetAll().ToDictionary(x=> x.Name);
+            var servers = serverRepository.GetAll().ToDictionary(x => x.Name);
 
             foreach (var directory in Directory.GetDirectories("c:\\temp\\IISLogs"))
             {
@@ -39,25 +55,39 @@ namespace IISLogsToSqlServer
 
                 parseLogsForServerService.Execute(server, directory);
             }
-
-            //var dimensionSyncServices = serviceProvider.GetServices<IDimensionSync>();
-
-            //foreach (var dimensionSync in dimensionSyncServices.OrderBy(x => x.Order))
-            //{
-            //    dimensionSync.Sync();
-            //}
         }
 
         private static ServiceProvider CreateContainer()
         {
             var serviceProvider = new ServiceCollection()
+                //common
                 .AddSingleton<IConnectionInfo>(new ConnectionInfo())
+                .AddSingleton<ILogger, Logger>()
+
+                //repositories
+                .AddSingleton<ILogEventRepository, LogEventRepository>()
                 .AddSingleton<IRepository<Server>, BaseRepository<Server>>()
                 .AddSingleton<IRepository<LogFile>, BaseRepository<LogFile>>()
-                .AddSingleton<IIisLogReader, IisLogReader>()
-                .AddSingleton<IRepository<W3CEvent>, BaseRepository<W3CEvent>>()
+                .AddSingleton<IRepository<LogEvent>, BaseRepository<LogEvent>>()
+                .AddSingleton<IRepository<DimAgent>, BaseRepository<DimAgent>>()
+                .AddSingleton<IRepository<DimClientIp>, BaseRepository<DimClientIp>>()
+                .AddSingleton<IRepository<DimDate>, BaseRepository<DimDate>>()
+                .AddSingleton<IRepository<DimHttpMethod>, BaseRepository<DimHttpMethod>>()
+                .AddSingleton<IRepository<DimPort>, BaseRepository<DimPort>>()
+                .AddSingleton<IRepository<DimServer>, BaseRepository<DimServer>>()
+                .AddSingleton<IRepository<DimServerIp>, BaseRepository<DimServerIp>>()
+                .AddSingleton<IRepository<DimStatus>, BaseRepository<DimStatus>>()
+                .AddSingleton<IRepository<DimSubStatus>, BaseRepository<DimSubStatus>>()
+                .AddSingleton<IRepository<DimTime>, BaseRepository<DimTime>>()
+                .AddSingleton<IRepository<DimUsername>, BaseRepository<DimUsername>>()
+                .AddSingleton<IRepository<DimWin32Status>, BaseRepository<DimWin32Status>>()
+                .AddSingleton<IRepository<FactEvent>, BaseRepository<FactEvent>>()
+
+                //services
+                .AddSingleton<IUpdateDataWarehouseService, UpdateDataWarehouseService>()
                 .AddSingleton<IParseLogsForServerService, ParseLogsForServerService>()
-                .AddSingleton<ILogger, Logger>()
+                .AddSingleton<IIisLogReader, IisLogReader>()
+
                 .BuildServiceProvider();
             return serviceProvider;
         }

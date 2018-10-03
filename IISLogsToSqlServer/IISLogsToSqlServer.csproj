@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IISLogsToSqlServer.Common\IISLogsToSqlServer.Common.csproj" />
+    <ProjectReference Include="..\IISLogsToSqlServer.DataWarehouseEtl\IISLogsToSqlServer.DataWarehouseEtl.csproj" />
     <ProjectReference Include="..\IISLogsToSqlServer.Parser\IISLogsToSqlServer.Parser.csproj" />
     <ProjectReference Include="..\PG.SqlBatchInsert\PG.SqlBatchInsert.csproj" />
   </ItemGroup>
@@ -26,10 +28,6 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Files\" />
   </ItemGroup>
 
 </Project>

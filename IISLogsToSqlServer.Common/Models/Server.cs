@@ -1,7 +1,7 @@
 ﻿using System;
 using Dapper.Contrib.Extensions;
 
-namespace IISLogsToSqlServer.Models
+namespace IISLogsToSqlServer.Common.Models
 {
     [Table("Servers")]
     public class Server

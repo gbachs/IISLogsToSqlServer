@@ -1,4 +1,4 @@
-﻿using IISLogsToSqlServer.Models;
+﻿using IISLogsToSqlServer.Common.Models;
 
 namespace IISLogsToSqlServer.Services.Interfaces
 {

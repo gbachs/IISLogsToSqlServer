@@ -2,36 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FastMember;
 using IISLogsToSqlServer.Parser.Models;
 
 namespace IISLogsToSqlServer.Parser
 {
-    public class W3CFieldsParser
+    public class FieldsParser
 	{
-	    public W3CFieldMap Parse(string line)
+	    public FieldMapping Parse(string line)
 	    {
-	        var fieldMap = new W3CFieldMap();
-	        var w3CFields = typeof(W3CEvent).GetProperties();
+	        var fieldMap = new FieldMapping();
+	        var w3CFields = typeof(LogEvent).GetProperties();
 	        var lineFields = line.Split(' ');
 	        var lineFieldsIndex = 0;
-
+	        var accessors = TypeAccessor.Create(typeof(LogEvent));
 	        foreach (var lineField in lineFields)
 	        {
 	            var index = lineFieldsIndex;
 	            GetFieldAttributeByName(lineField, w3CFields, (fieldAttribute, fieldInfo) =>
 	            {
-	                fieldMap.Add(index, fieldAttribute.Convertor, fieldInfo);
+	                fieldMap.Add(index, new FieldMapInfo(fieldAttribute.Convertor, accessors, fieldInfo.Name));
 	            });
 	            lineFieldsIndex += 1;
 	        }
 	        return fieldMap;
 	    }
 
-        private static void GetFieldAttributeByName(string name, IEnumerable<PropertyInfo> w3CFields, Action<W3CFieldBaseAttribute, PropertyInfo> foundBlock)
+        private static void GetFieldAttributeByName(string name, IEnumerable<PropertyInfo> w3CFields, Action<FieldBaseAttribute, PropertyInfo> foundBlock)
 		{
 		    foreach (var w3CField in w3CFields)
 		    {
-		        var fieldAttribute = (W3CFieldBaseAttribute)w3CField.GetCustomAttributes(typeof(W3CFieldBaseAttribute), false).FirstOrDefault();
+		        var fieldAttribute = (FieldBaseAttribute)w3CField.GetCustomAttributes(typeof(FieldBaseAttribute), false).FirstOrDefault();
 		        if (fieldAttribute != null && fieldAttribute.FieldName == name)
 		        {
 		            foundBlock(fieldAttribute, w3CField);

@@ -5,9 +5,18 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IISLogsToSqlServer", "IISLogsToSqlServer\IISLogsToSqlServer.csproj", "{3565C41F-49AD-4C76-BE73-844878ADB0A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISLogsToSqlServer.Parser", "IISLogsToSqlServer.Parser\IISLogsToSqlServer.Parser.csproj", "{7BE986D8-4AB0-479D-A284-22914C0BB0F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IISLogsToSqlServer.Parser", "IISLogsToSqlServer.Parser\IISLogsToSqlServer.Parser.csproj", "{7BE986D8-4AB0-479D-A284-22914C0BB0F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PG.SqlBatchInsert", "PG.SqlBatchInsert\PG.SqlBatchInsert.csproj", "{01E2442E-3172-452B-8E00-EFD61BF057BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PG.SqlBatchInsert", "PG.SqlBatchInsert\PG.SqlBatchInsert.csproj", "{01E2442E-3172-452B-8E00-EFD61BF057BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{EFDC96D0-EF1E-40AE-B99D-9667AC0C2CF3}"
+	ProjectSection(SolutionItems) = preProject
+		DBCreation.sql = DBCreation.sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISLogsToSqlServer.DataWarehouseEtl", "IISLogsToSqlServer.DataWarehouseEtl\IISLogsToSqlServer.DataWarehouseEtl.csproj", "{E01063FA-FB57-4E0E-952E-CC7E519E0BD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IISLogsToSqlServer.Common", "IISLogsToSqlServer.Common\IISLogsToSqlServer.Common.csproj", "{0141E3B1-C6DA-4A59-937F-44D9833FF728}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +36,14 @@ Global
 		{01E2442E-3172-452B-8E00-EFD61BF057BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01E2442E-3172-452B-8E00-EFD61BF057BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01E2442E-3172-452B-8E00-EFD61BF057BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E01063FA-FB57-4E0E-952E-CC7E519E0BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01063FA-FB57-4E0E-952E-CC7E519E0BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01063FA-FB57-4E0E-952E-CC7E519E0BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01063FA-FB57-4E0E-952E-CC7E519E0BD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0141E3B1-C6DA-4A59-937F-44D9833FF728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0141E3B1-C6DA-4A59-937F-44D9833FF728}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0141E3B1-C6DA-4A59-937F-44D9833FF728}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0141E3B1-C6DA-4A59-937F-44D9833FF728}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
