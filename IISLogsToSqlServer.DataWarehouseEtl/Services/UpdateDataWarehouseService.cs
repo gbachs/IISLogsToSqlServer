@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using IISLogsToSqlServer.Common;
 using IISLogsToSqlServer.Common.Models;
 using IISLogsToSqlServer.Common.Repositories.Interfaces;
 using IISLogsToSqlServer.DataWarehouseEtl.Dimensions;
@@ -26,6 +27,7 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
         private readonly IRepository<Server> _serverRepository;
         private readonly IRepository<LogFile> _logFileRepository;
         private readonly IRepository<FactEvent> _factEventRepository;
+        private readonly ILogger _logger;
 
         public UpdateDataWarehouseService(ILogEventRepository logEventRepository,
             IRepository<DimClientIp> dimClientIpRepository,
@@ -42,7 +44,8 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
             IRepository<DimAgent> dimAgentRepository,
             IRepository<Server> serverRepository,
             IRepository<LogFile> logFileRepository,
-            IRepository<FactEvent> factEventRepository)
+            IRepository<FactEvent> factEventRepository,
+            ILogger logger)
         {
             _logEventRepository = logEventRepository;
             _dimClientIpRepository = dimClientIpRepository;
@@ -60,10 +63,12 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
             _serverRepository = serverRepository;
             _logFileRepository = logFileRepository;
             _factEventRepository = factEventRepository;
+            _logger = logger;
         }
 
         public void Update()
         {
+            _logger.Log("Loading current dimensions");
             var dimClientIps = _dimClientIpRepository.GetAll().ToDictionary(x => x.ClientIpAddress);
             var dimDates = _dimDateRepository.GetAll().ToDictionary(x => x.Date);
             var dimTimes = _dimTimeRepository.GetAll().ToDictionary(x => x.Time);
@@ -79,10 +84,13 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
 
             var files = _logFileRepository.GetAll().ToDictionary(x => x.Id);
             var servers = _serverRepository.GetAll().ToDictionary(x => x.Id);
+
             var toInsert = new List<FactEvent>();
 
             while (GetWork(out var work))
             {
+                _logger.Log($"Processing {work.Count} events");
+
                 foreach (var logEvent in work)
                 {
                     if (!dimUsernames.TryGetValue(logEvent.Username, out var dimUsername))
@@ -188,7 +196,10 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
 
                 if (toInsert.Any())
                 {
+                    _logger.Log($"Saving {toInsert.Count}");
                     _factEventRepository.BulkAdd(toInsert);
+
+                    _logger.Log("Updating Processed Flag");
                     _logEventRepository.UpdateAll(work);
                     toInsert.Clear();
                 }
@@ -197,7 +208,7 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
 
         private bool GetWork(out List<LogEvent> events)
         {
-            events = _logEventRepository.LoadTopNotProcessed(10000);
+            events = _logEventRepository.LoadTopNotProcessed(100000);
             return events.Any();
         }
     }

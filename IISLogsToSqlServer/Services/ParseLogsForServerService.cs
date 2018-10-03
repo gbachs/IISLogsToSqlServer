@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
+using IISLogsToSqlServer.Common;
 using IISLogsToSqlServer.Common.Models;
-using IISLogsToSqlServer.Common.Repositories;
 using IISLogsToSqlServer.Common.Repositories.Interfaces;
 using IISLogsToSqlServer.Parser.Interfaces;
 using IISLogsToSqlServer.Parser.Models;
