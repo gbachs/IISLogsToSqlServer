@@ -27,28 +27,44 @@ namespace IISLogsToSqlServer.Services
             _rawLogsRepository = rawLogsRepository;
         }
 
-        public void Execute(Server server, string folderPath)
+        public void Execute(Server server, string severLogsFolder)
         {
             var existingFiles = _logFileRepository.GetAll().ToDictionary(x => x.Name);
 
-            foreach (var file in Directory.GetFiles(folderPath))
+            foreach (var file in Directory.GetFiles(severLogsFolder))
             {
-                var fileInfo = new FileInfo(file);
+                var logFileInfo = new FileInfo(file);
 
-                if (existingFiles.TryGetValue(fileInfo.Name, out var logFile))
+                if (existingFiles.TryGetValue(logFileInfo.Name, out var logFile))
+                {
+                    MoveLogFileToCompletedFolder(severLogsFolder, logFileInfo);
                     continue;
+                }
 
                 logFile = new LogFile
                 {
-                    Name = fileInfo.Name,
+                    Name = logFileInfo.Name,
                     ServerId = server.Id
                 };
 
                 _logFileRepository.Add(logFile);
 
                 ParseLogFile(server, logFile, file);
+
+                MoveLogFileToCompletedFolder(severLogsFolder, logFileInfo);
             }
         }
+
+        private static void MoveLogFileToCompletedFolder(string severLogsFolder, FileInfo logFileInfo)
+        {
+            var completedFolder = new DirectoryInfo(Path.Combine(severLogsFolder, "Completed"));
+
+            if (!completedFolder.Exists)
+            {
+                File.Move(logFileInfo.FullName, Path.Combine(completedFolder.FullName, logFileInfo.Name));
+            }
+        }
+
 
         private void ParseLogFile(Server server, LogFile logFile, string filePath)
         {

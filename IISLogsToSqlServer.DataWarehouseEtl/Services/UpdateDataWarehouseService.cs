@@ -208,6 +208,7 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
 
         private bool GetWork(out List<LogEvent> events)
         {
+            _logger.Log("Loading not processed");
             events = _logEventRepository.LoadTopNotProcessed(100000);
             return events.Any();
         }

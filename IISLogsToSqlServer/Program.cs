@@ -22,19 +22,24 @@ namespace IISLogsToSqlServer
         static void Main(string[] args)
         {
             var container = CreateContainer();
+            var logger = container.GetService<ILogger>();
 
-            // UpdateRawLogs(container);
-            UpdateWarehouse(container);
+            UpdateRawLogs(logger, container);
+            UpdateWarehouse(logger, container);
         }
 
-        private static void UpdateWarehouse(ServiceProvider container)
+        private static void UpdateWarehouse(ILogger logger, IServiceProvider container)
         {
+            logger.Log("Update Warehouse");
+
             var updateWarehouseService = container.GetService<IUpdateDataWarehouseService>();
             updateWarehouseService.Update();
         }
 
-        private static void UpdateRawLogs(ServiceProvider container)
+        private static void UpdateRawLogs(ILogger logger, IServiceProvider container)
         {
+            logger.Log("Injesting logs");
+
             var serverRepository = container.GetService<IRepository<Server>>();
             var parseLogsForServerService = container.GetService<IParseLogsForServerService>();
 
