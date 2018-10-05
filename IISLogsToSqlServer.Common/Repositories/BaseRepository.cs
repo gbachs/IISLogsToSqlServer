@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using Dapper;
 using Dapper.Contrib.Extensions;
 using IISLogsToSqlServer.Common.Models;
 using IISLogsToSqlServer.Common.Repositories.Interfaces;

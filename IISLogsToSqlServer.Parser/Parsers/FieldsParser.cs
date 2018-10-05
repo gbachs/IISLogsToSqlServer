@@ -5,7 +5,7 @@ using System.Reflection;
 using FastMember;
 using IISLogsToSqlServer.Parser.Models;
 
-namespace IISLogsToSqlServer.Parser
+namespace IISLogsToSqlServer.Parser.Parsers
 {
     public class FieldsParser
 	{

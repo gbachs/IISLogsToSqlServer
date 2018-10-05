@@ -4,7 +4,8 @@ using IISLogsToSqlServer.Parser.Models;
 
 namespace IISLogsToSqlServer.Parser.Interfaces
 {
-    public interface IIisLogReader
+    // ReSharper disable once InconsistentNaming
+    public interface IIISEventLogReader
     {
         IEnumerable<LogEvent> Read(TextReader reader);
     }

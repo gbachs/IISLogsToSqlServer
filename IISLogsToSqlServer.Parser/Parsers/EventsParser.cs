@@ -1,6 +1,6 @@
 ﻿using IISLogsToSqlServer.Parser.Models;
 
-namespace IISLogsToSqlServer.Parser
+namespace IISLogsToSqlServer.Parser.Parsers
 {
     internal sealed class EventsParser
     {

@@ -11,7 +11,8 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
 {
     public class UpdateDataWarehouseService : IUpdateDataWarehouseService
     {
-        private readonly ILogEventRepository _logEventRepository;
+        private readonly ILogEventToProcessRepository _logEventToProcessRepository;
+        private readonly IRepository<LogEvent> _logEventRepository;
         private readonly IRepository<DimAgent> _dimAgentRepository;
         private readonly IRepository<DimClientIp> _dimClientIpRepository;
         private readonly IRepository<DimDate> _dimDateRepository;
@@ -29,7 +30,7 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
         private readonly IRepository<FactEvent> _factEventRepository;
         private readonly ILogger _logger;
 
-        public UpdateDataWarehouseService(ILogEventRepository logEventRepository,
+        public UpdateDataWarehouseService(ILogEventToProcessRepository logEventToProcessRepository,
             IRepository<DimClientIp> dimClientIpRepository,
             IRepository<DimDate> dimDateRepository,
             IRepository<DimHttpMethod> dimHttpMethodRepository,
@@ -45,9 +46,11 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
             IRepository<Server> serverRepository,
             IRepository<LogFile> logFileRepository,
             IRepository<FactEvent> factEventRepository,
-            ILogger logger)
+            ILogger logger,
+            ILogEventToProcessRepository toProcessRepository,
+            IRepository<LogEvent> logEventRepository)
         {
-            _logEventRepository = logEventRepository;
+            _logEventToProcessRepository = logEventToProcessRepository;
             _dimClientIpRepository = dimClientIpRepository;
             _dimDateRepository = dimDateRepository;
             _dimHttpMethodRepository = dimHttpMethodRepository;
@@ -64,6 +67,8 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
             _logFileRepository = logFileRepository;
             _factEventRepository = factEventRepository;
             _logger = logger;
+            _logEventRepository = logEventRepository;
+            _logEventToProcessRepository = toProcessRepository;
         }
 
         public void Update()
@@ -107,9 +112,9 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
                         _dimSubStatusRepository.Add(dimSubStatus);
                     }
 
-                    if (!dimWin32Statuses.TryGetValue((int)logEvent.Win32Status, out var dimWin32Status))
+                    if (!dimWin32Statuses.TryGetValue((int) logEvent.Win32Status, out var dimWin32Status))
                     {
-                        dimWin32Status = new DimWin32Status((int)logEvent.Win32Status);
+                        dimWin32Status = new DimWin32Status((int) logEvent.Win32Status);
                         dimWin32Statuses.Add(dimWin32Status.Win32Status, dimWin32Status);
                         _dimWin32StatusRepository.Add(dimWin32Status);
                     }
@@ -190,8 +195,6 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
                     };
 
                     toInsert.Add(factEvent);
-
-                    logEvent.Processed = true;
                 }
 
                 if (toInsert.Any())
@@ -199,17 +202,21 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
                     _logger.Log($"Saving {toInsert.Count}");
                     _factEventRepository.BulkAdd(toInsert);
 
-                    _logger.Log("Updating Processed Flag");
-                    _logEventRepository.UpdateAll(work);
+                    _logger.Log("Deleting from LogEventsToProcess");
+                    _logEventToProcessRepository.BulkDelete(work);
+
+                    _logger.Log("Inserting into LogEvents");
+                    _logEventRepository.BulkAdd(work.Cast<LogEvent>().ToList());
+
                     toInsert.Clear();
                 }
             }
         }
 
-        private bool GetWork(out List<LogEvent> events)
+        private bool GetWork(out List<LogEventToProcess> events)
         {
             _logger.Log("Loading not processed");
-            events = _logEventRepository.LoadTopNotProcessed(100000);
+            events = _logEventToProcessRepository.LoadTopNotProcessed(100000);
             return events.Any();
         }
     }

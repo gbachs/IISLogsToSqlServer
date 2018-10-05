@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using IISLogsToSqlServer.Parser.Interfaces;
 using IISLogsToSqlServer.Parser.Models;
+using IISLogsToSqlServer.Parser.Parsers;
 
 namespace IISLogsToSqlServer.Parser
 {
-    public class IisLogReader : IIisLogReader
+    // ReSharper disable once InconsistentNaming
+    public class IISEventLogReader : IIISEventLogReader
     {
         public IEnumerable<LogEvent> Read(TextReader reader)
         {
@@ -36,7 +38,7 @@ namespace IISLogsToSqlServer.Parser
 
             if (line.StartsWith(commentSoftware, StringComparison.OrdinalIgnoreCase))
             {
-                //    Software = RightOf(commentSoftware, line);
+                //Software = RightOf(commentSoftware, line);
             }
             else if (line.StartsWith(commentFields, StringComparison.OrdinalIgnoreCase))
             {

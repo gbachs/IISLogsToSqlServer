@@ -61,7 +61,5 @@ namespace IISLogsToSqlServer.Parser.Models
         [Int32("cs-bytes")] public int BytesReceived { get; set; }
 
         [Field("host")] public string Host { get; set; }
-
-        public bool Processed { get; set; }
     }
 }
