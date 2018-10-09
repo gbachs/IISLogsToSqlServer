@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IISLogsToSqlServer.Common;
 using IISLogsToSqlServer.Common.Models;
 using IISLogsToSqlServer.Common.Repositories.Interfaces;
@@ -12,12 +14,12 @@ namespace IISLogsToSqlServer.Services
 {
     public class ParseLogsForServerService : IParseLogsForServerService
     {
-        private readonly IRepository<LogFile> _logFileRepository;
+        private readonly ILogFileRepository _logFileRepository;
         private readonly IRepository<LogEventToProcess> _toProcessRepository;
         private readonly IIISEventLogReader _iisLogReader;
         private readonly ILogger _logger;
 
-        public ParseLogsForServerService(IRepository<LogFile> logFileRepository,
+        public ParseLogsForServerService(ILogFileRepository logFileRepository,
             IIISEventLogReader iisLogReader,
             ILogger logger,
             IRepository<LogEventToProcess> toProcessRepository)
@@ -30,9 +32,11 @@ namespace IISLogsToSqlServer.Services
 
         public void Execute(Server server, string severLogsFolder)
         {
-            var existingFiles = _logFileRepository.GetAll().ToDictionary(x => x.Name);
+            var existingFiles = _logFileRepository.GetAllForServer(server.Id).ToDictionary(x => x.Name);
 
-            foreach (var file in Directory.GetFiles(severLogsFolder))
+            var filesOnDisk = Directory.GetFiles(severLogsFolder);
+
+            Parallel.ForEach(filesOnDisk, GetParallelOptions(), file =>
             {
                 var logFileInfo = new FileInfo(file);
 
@@ -50,7 +54,15 @@ namespace IISLogsToSqlServer.Services
                 }
 
                 MoveLogFileToCompletedFolder(severLogsFolder, logFileInfo);
-            }
+            });
+        }
+
+        private static ParallelOptions GetParallelOptions()
+        {
+            return new ParallelOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
         }
 
         private static void MoveLogFileToCompletedFolder(string severLogsFolder, FileSystemInfo logFileInfo)
@@ -76,7 +88,7 @@ namespace IISLogsToSqlServer.Services
                 x.FileId = logFile.Id;
             });
 
-            _toProcessRepository.BulkAdd(data.Select(x=> new LogEventToProcess(x)).ToList());
+            _toProcessRepository.BulkAdd(data.Select(x => new LogEventToProcess(x)).ToList());
 
             _logger.Log($"Parsed log file: {filePath} for server: {server.Name}");
         }

@@ -6,6 +6,34 @@ namespace IISLogsToSqlServer.Parser.Models
     [Table("RawLogs")]
     public class LogEvent
     {
+        public LogEvent()
+        {
+
+        }
+
+        public LogEvent(LogEventToProcess logEventToProcess)
+        {
+            DateTime = logEventToProcess.DateTime;
+            Agent = logEventToProcess.Agent;
+            BytesReceived = logEventToProcess.BytesReceived;
+            BytesSent = logEventToProcess.BytesSent;
+            ClientIpAddress = logEventToProcess.ClientIpAddress;
+            FileId = logEventToProcess.FileId;
+            Host = logEventToProcess.Host;
+            Method = logEventToProcess.Method;
+            Port = logEventToProcess.Port;
+            Referer = logEventToProcess.Referer;
+            UriQuery = logEventToProcess.UriQuery;
+            Win32Status = logEventToProcess.Win32Status;
+            Status = logEventToProcess.Status;
+            SubStatus = logEventToProcess.SubStatus;
+            UriStem = logEventToProcess.UriStem;
+            TimeTaken = logEventToProcess.TimeTaken;
+            ServerIpAddress = logEventToProcess.ServerIpAddress;
+            Username = logEventToProcess.Username;
+        }
+
+
         [Key] public long Id { get; set; }
 
 

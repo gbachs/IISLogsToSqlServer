@@ -19,36 +19,37 @@ namespace IISLogsToSqlServer
         public static ServiceProvider Initialize()
         {
             var serviceProvider = new ServiceCollection()
-                  //common
-                  .AddSingleton<IConnectionInfo>(new ConnectionInfo())
-                  .AddSingleton<ILogger, Logger>()
+                //common
+                .AddSingleton<IConnectionInfo>(new ConnectionInfo())
+                .AddSingleton<ILogger, Logger>()
 
-                  //repositories
-                  .AddSingleton<ILogEventToProcessRepository, LogEventToProcessRepository>()
-                  .AddSingleton<IRepository<Server>, BaseRepository<Server>>()
-                  .AddSingleton<IRepository<LogFile>, BaseRepository<LogFile>>()
-                  .AddSingleton<IRepository<LogEvent>, BaseRepository<LogEvent>>()
-                  .AddSingleton<IRepository<DimAgent>, BaseRepository<DimAgent>>()
-                  .AddSingleton<IRepository<DimClientIp>, BaseRepository<DimClientIp>>()
-                  .AddSingleton<IRepository<DimDate>, BaseRepository<DimDate>>()
-                  .AddSingleton<IRepository<DimHttpMethod>, BaseRepository<DimHttpMethod>>()
-                  .AddSingleton<IRepository<DimPort>, BaseRepository<DimPort>>()
-                  .AddSingleton<IRepository<DimServer>, BaseRepository<DimServer>>()
-                  .AddSingleton<IRepository<DimServerIp>, BaseRepository<DimServerIp>>()
-                  .AddSingleton<IRepository<DimStatus>, BaseRepository<DimStatus>>()
-                  .AddSingleton<IRepository<DimSubStatus>, BaseRepository<DimSubStatus>>()
-                  .AddSingleton<IRepository<DimTime>, BaseRepository<DimTime>>()
-                  .AddSingleton<IRepository<DimUsername>, BaseRepository<DimUsername>>()
-                  .AddSingleton<IRepository<DimWin32Status>, BaseRepository<DimWin32Status>>()
-                  .AddSingleton<IRepository<FactEvent>, BaseRepository<FactEvent>>()
-                  .AddSingleton<IRepository<LogEventToProcess>, BaseRepository<LogEventToProcess>>()
+                //repositories
+                .AddSingleton<ILogEventToProcessRepository, LogEventToProcessRepository>()
+                .AddSingleton<IRepository<Server>, BaseRepository<Server>>()
+                .AddSingleton<IRepository<LogFile>, BaseRepository<LogFile>>()
+                .AddSingleton<ILogFileRepository, LogFileRepository>()
+                .AddSingleton<IRepository<LogEvent>, BaseRepository<LogEvent>>()
+                .AddSingleton<IRepository<DimAgent>, BaseRepository<DimAgent>>()
+                .AddSingleton<IRepository<DimClientIp>, BaseRepository<DimClientIp>>()
+                .AddSingleton<IRepository<DimDate>, BaseRepository<DimDate>>()
+                .AddSingleton<IRepository<DimHttpMethod>, BaseRepository<DimHttpMethod>>()
+                .AddSingleton<IRepository<DimPort>, BaseRepository<DimPort>>()
+                .AddSingleton<IRepository<DimServer>, BaseRepository<DimServer>>()
+                .AddSingleton<IRepository<DimServerIp>, BaseRepository<DimServerIp>>()
+                .AddSingleton<IRepository<DimStatus>, BaseRepository<DimStatus>>()
+                .AddSingleton<IRepository<DimSubStatus>, BaseRepository<DimSubStatus>>()
+                .AddSingleton<IRepository<DimTime>, BaseRepository<DimTime>>()
+                .AddSingleton<IRepository<DimUsername>, BaseRepository<DimUsername>>()
+                .AddSingleton<IRepository<DimWin32Status>, BaseRepository<DimWin32Status>>()
+                .AddSingleton<IRepository<FactEvent>, BaseRepository<FactEvent>>()
+                .AddSingleton<IRepository<LogEventToProcess>, BaseRepository<LogEventToProcess>>()
 
-                  //services
-                  .AddSingleton<IUpdateDataWarehouseService, UpdateDataWarehouseService>()
-                  .AddSingleton<IParseLogsForServerService, ParseLogsForServerService>()
-                  .AddSingleton<IIISEventLogReader, IISEventLogReader>()
+                //services
+                .AddSingleton<IUpdateDataWarehouseService, UpdateDataWarehouseService>()
+                .AddSingleton<IParseLogsForServerService, ParseLogsForServerService>()
+                .AddSingleton<IIISEventLogReader, IISEventLogReader>()
 
-                  .BuildServiceProvider();
+                .BuildServiceProvider();
 
             return serviceProvider;
         }

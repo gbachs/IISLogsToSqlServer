@@ -206,7 +206,7 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
                     _logEventToProcessRepository.BulkDelete(work);
 
                     _logger.Log("Inserting into LogEvents");
-                    _logEventRepository.BulkAdd(work.Cast<LogEvent>().ToList());
+                    _logEventRepository.BulkAdd(work.Select(x=> new LogEvent(x)).ToList());
 
                     toInsert.Clear();
                 }
