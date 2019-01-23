@@ -112,9 +112,9 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
                         _dimSubStatusRepository.Add(dimSubStatus);
                     }
 
-                    if (!dimWin32Statuses.TryGetValue((int) logEvent.Win32Status, out var dimWin32Status))
+                    if (!dimWin32Statuses.TryGetValue((int)logEvent.Win32Status, out var dimWin32Status))
                     {
-                        dimWin32Status = new DimWin32Status((int) logEvent.Win32Status);
+                        dimWin32Status = new DimWin32Status((int)logEvent.Win32Status);
                         dimWin32Statuses.Add(dimWin32Status.Win32Status, dimWin32Status);
                         _dimWin32StatusRepository.Add(dimWin32Status);
                     }
@@ -206,7 +206,7 @@ namespace IISLogsToSqlServer.DataWarehouseEtl.Services
                     _logEventToProcessRepository.BulkDelete(work);
 
                     _logger.Log("Inserting into LogEvents");
-                    _logEventRepository.BulkAdd(work.Select(x=> new LogEvent(x)).ToList());
+                    _logEventRepository.BulkAdd(work.Select(x => new LogEvent(x)).ToList());
 
                     toInsert.Clear();
                 }

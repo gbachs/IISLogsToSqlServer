@@ -18,7 +18,7 @@ namespace IISLogsToSqlServer
             var logger = container.GetService<ILogger>();
 
             UpdateRawLogs(logger, container);
-            UpdateWarehouse(logger, container);
+            //UpdateWarehouse(logger, container);
         }
 
         private static void UpdateWarehouse(ILogger logger, IServiceProvider container)
